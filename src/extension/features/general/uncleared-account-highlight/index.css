@@ -2,11 +2,11 @@
   font-size: 0.8rem;
 }
 
-.tk-nav-account-icons-right-space .nav-account-icons-right svg {
+.nav-accounts .nav-account-icons-right svg {
   position: static !important;
 }
 
-.tk-nav-account-icons-right-space .nav-account-icons-right {
+.nav-accounts .nav-account-icons-right {
   display: flex;
   align-items: center;
   width: 2rem;

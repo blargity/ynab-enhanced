@@ -24,8 +24,6 @@ export class UnclearedAccountHighlight extends Feature {
     // cleared icon to it, that's not enough space if there's already an icon in the space
     // so we need to add a class which overrides it to 2rem.
     $('.nav-account-row').each((_, navAccount) => {
-      let hasOtherNavAccountRightIcons = false;
-
       const account = getAccountsService().getAccountById(navAccount.dataset.accountId);
 
       const unclearedTransactions = account
@@ -44,18 +42,8 @@ export class UnclearedAccountHighlight extends Feature {
       const isIndicatorShowing = navAccount.querySelector(`.${INDICATOR_CLASS}`) !== null;
       const navAccountIconsRight = navAccount.querySelector('.nav-account-icons-right');
 
-      if ($(navAccountIconsRight).children(`:not(.${INDICATOR_CLASS})`).length) {
-        hasOtherNavAccountRightIcons = true;
-      }
-
       if (!isIndicatorShowing) {
         $(navAccountIconsRight).append(INDICATOR_ELEMENT);
-      }
-
-      if (hasOtherNavAccountRightIcons) {
-        navAccount.classList.add('tk-nav-account-icons-right-space');
-      } else {
-        navAccount.classList.remove('tk-nav-account-icons-right-space');
       }
     });
   }
