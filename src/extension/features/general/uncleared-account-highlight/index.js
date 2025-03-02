@@ -39,8 +39,6 @@ export class UnclearedAccountHighlight extends Feature {
         return;
       }
 
-      console.log(unclearedTransactions);
-
       const isIndicatorShowing = navAccount.querySelector(`.${INDICATOR_CLASS}`) !== null;
       const navAccountIconsRight = navAccount.querySelector('.nav-account-icons-right');
 
