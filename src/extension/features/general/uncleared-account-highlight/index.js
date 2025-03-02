@@ -4,10 +4,20 @@ import { getAccountsService } from 'toolkit/extension/utils/ynab';
 import debounce from 'debounce';
 
 const INDICATOR_CLASS = 'tk-uncleared-account-indicator';
-const INDICATOR_ELEMENT = `<svg class="ynab-new-icon ${INDICATOR_CLASS} " width="16" height="16"><use href="#icon_sprite_cleared_circle"></use></svg>`;
+const INDICATOR_ICON_UNCLEARED = '#icon_sprite_cleared_circle';
+const INDICATOR_ICON_CLEARED = '#icon_sprite_cleared_circle_fill';
+const INDICATOR_ELEMENT = `<svg class="ynab-new-icon ${INDICATOR_CLASS} " width="16" height="16"><use href="${INDICATOR_ICON_CLEARED}"></use></svg>`;
 
 function isUnclearedTransaction(transaction) {
   return transaction && transaction.cleared === ynab.constants.TransactionState.Uncleared;
+}
+
+function isUnreconciledTransaction(transaction) {
+  return (
+    transaction &&
+    transaction.accepted &&
+    transaction.cleared === ynab.constants.TransactionState.Cleared
+  );
 }
 
 export class UnclearedAccountHighlight extends Feature {
@@ -32,7 +42,12 @@ export class UnclearedAccountHighlight extends Feature {
         .getTransactions()
         .filter((transaction) => isUnclearedTransaction(transaction));
 
-      if (unclearedTransactions.length === 0) {
+      const unreconciledTransactions =
+        this.settings.enabled === '2'
+          ? account.getTransactions().filter(isUnreconciledTransaction)
+          : [];
+
+      if (unclearedTransactions.length === 0 && unreconciledTransactions.length === 0) {
         if (navAccount.querySelector(`.${INDICATOR_CLASS}`) !== null) {
           navAccount.querySelector(`.${INDICATOR_CLASS}`).remove();
         }
@@ -50,6 +65,13 @@ export class UnclearedAccountHighlight extends Feature {
 
       if (!isIndicatorShowing) {
         $(navAccountIconsRight).append(INDICATOR_ELEMENT);
+      }
+
+      const iconUseElement = navAccountIconsRight.querySelector(`.${INDICATOR_CLASS} use`);
+      if (unclearedTransactions.length !== 0) {
+        iconUseElement.setAttribute('href', INDICATOR_ICON_UNCLEARED);
+      } else if (unreconciledTransactions.length !== 0) {
+        iconUseElement.setAttribute('href', INDICATOR_ICON_CLEARED);
       }
 
       if (hasOtherNavAccountRightIcons) {
